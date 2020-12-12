@@ -125,9 +125,7 @@ new Vue({
 
 
             this.processing.album = true;
-            axios.get(`search?term=${encodeURIComponent(this.search)}&country=MX&media=music&entity=${this.type}&limit=200&offset=${this.page * 200}`, {
-                headers: { "Access-Control-Allow-Origin": "*" }
-            })
+            axios.get(`search?term=${encodeURIComponent(this.search)}&country=MX&media=music&entity=${this.type}&limit=200&offset=${this.page * 200}`)
                 .then((resp) => {
 
                     let albums = resp.data.results.filter(function (album) {
