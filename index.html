@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Music</title>
+    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <script src="https://kit.fontawesome.com/da0878adae.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="src/main.css" />
+</head>
+
+<body class="colorBlack">
+    <div id="app">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">Navbar</a>
+                <!--  <ul class="navbar-nav mr-auto">			      		    
+                                      </ul> -->
+                <form class="form-inline my-2 my-lg-0" @submit.prevent="sendForm">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
+                        v-model="search" />
+                    <div class="form-group mr-sm-2">
+                        <label class="mr-sm-2">By</label>
+                        <select class="form-control" v-model="type">
+                            <option value="album">Album</option>
+                            <option value="song">Song</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mr-sm-2">
+                        <label for="startdate" class="col-2 col-form-label">Start Date</label>
+                        <div class="col-10">
+                            <input class="form-control" name='startDate' type="date" id="startdate">
+                        </div>
+                    </div>
+
+                    <div class="form-group mr-sm-2">
+                        <label for="enddate" class="col-2 col-form-label">End Date</label>
+                        <div class="col-10">
+                            <input class="form-control" name='endDate' type="date" id="enddate">
+                        </div>
+                    </div>
+
+
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                        Search
+                    </button>
+                </form>
+            </nav>
+        </header>
+        <div class="container-fluid mt-2" id="cntAlbum" :class="{'d-none': activeMusic == true}">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <!--<li class="page-item" v-for="pageNumber in totalPages"
+                        v-if="Math.abs(pageNumber - currentPage) < 3 || pageNumber === totalPages || pageNumber === 1">
+                        <a class="page-link " v-bind:key="pageNumber" href="#" @click="setPage(pageNumber)"
+                            :class="{current: currentPage === pageNumber, last: (pageNumber == totalPages && Math.abs(pageNumber - currentPage) > 3), first:(pageNumber == 1 && Math.abs(pageNumber - currentPage) > 3)}">{{
+                            pageNumber }}</a>
+                    </li>
+                -->
+                </ul>
+            </nav>
+            <template v-if="albums">
+                <div class="row">
+                    <a href="#" @click="getMusic(album.collectionId)" class="col-6 col-sm-4 col-md-3"
+                        v-for="(album,index) in paginate" :key="index">
+                        <div class="card mb-3 shadow-sm">
+                            <img :src="album.artworkUrl100" class="card-img-top" alt="..." />
+                            <div class="card-body">
+                                <p class="card-title" :title="album.collectionName">
+                                    {{album.collectionName}}
+                                </p>
+                                <p :title="album.collectionName">{{album.artistName}}</p>
+                                <p :title="album.collectionName">
+                                    Date: {{album.releaseDate.split('T')[0]}}
+
+                                </p>
+                                <p :title="album.collectionName">
+                                    Genre: {{album.primaryGenreName}}
+                                    &#9660;
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="text-center" id='boxLast' v-if="albums.length>0">
+                    <button class="btn btn-primary" @scroll="nextPage">&#9660;</button>
+                    <br />
+                    <br />
+                    <br />
+                </div>
+            </template>
+            <template v-else>
+                <h2 class="text-center p-50">No album found ...</h2>
+            </template>
+
+            <template v-if="processing.album">
+                <div class="loading text-center">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-success" style="width: 5rem; height: 5rem;" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    <span class="mt-5">Searching...</span>
+                </div>
+            </template>
+        </div>
+        <div class="container-fluid mt-2" id="cntMusic"
+            :class="{fadeIn: activeMusic == true,'d-none': activeMusic == false}">
+            <p>
+                <button class="btn btn-outline-primary" @click="activeMusic = false">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </p>
+            <template v-if="processing.music">
+                <div class="loading text-center">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-success" style="width: 5rem; height: 5rem;" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    <span class="mt-5">Searching...</span>
+                </div>
+            </template>
+            <template v-else>
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="card">
+                            <img :src="imgmusicAlbum" class="img-fluid" width="100%" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-8">
+                        <h4>{{musicAlbum}}</h4>
+                        <h5>{{musicArtist}}</h5>
+                        <small>{{musicGenre}}</small>
+                        <ul class="lis-group list-group-flush group-track mt-3">
+                            <li class="list-group-item item-track" :class="{active: index == active}"
+                                v-for="(music,index) in musicTraks" @click="active = index,play(music.previewUrl)">
+                                <!-- <span></span>							 -->
+                                {{index + 1}} - {{ music.trackName}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="src/main.js"></script>
+</body>
+
+</html>

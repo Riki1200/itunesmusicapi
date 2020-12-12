@@ -1,0 +1,50 @@
+.card-title{
+	white-space: nowrap;	
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+a:hover{
+	text-decoration: none;
+}
+.group-track{
+	padding: 0;
+}
+.item-track:hover{
+	cursor: pointer;
+	background-color: rgb(238, 238, 238);
+}
+.list-group-flush .list-group-item:first-child{
+	border-top: 1px solid rgba(0,0,0,.125);
+}
+.list-group-flush:last-child .list-group-item:last-child{
+	border-bottom: 1px solid rgba(0,0,0,.125);
+	border-bottom-width: 100%;	
+}
+.list-group-item{
+	user-select: none;
+}
+.fadeIn{
+	animation-name: fadeIn;
+	animation-duration: 1s;
+}
+.p-50{
+	padding: 50px;
+}
+@keyframes fadeIn{
+	from{
+		opacity: 0;
+	}
+	to{
+		opacity: 1
+	}
+}
+
+.selected {
+	color: white;
+	background-color: #007BFF;
+}
+
+/* El color se puede cambiar por un color en códgo hexadecimal */
+.background {
+	background-color: rgb(207, 53, 194);
+}
